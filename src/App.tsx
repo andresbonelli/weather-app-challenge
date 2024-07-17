@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {useState, useEffect} from 'react';
+import {getCurrentWeather, getForecast} from './api.ts';
 
 import {
   SafeAreaView,
@@ -18,10 +19,13 @@ import {
   View,
 } from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {StyledContainer} from './styled/StyledContainer';
+import {colors, fonts} from './utils.js';
+import {
+  HorizontalContainer,
+  VerticalContainer,
+} from './styled/StyledContainers.js';
 import {Image} from 'react-native-svg';
-const cityName = 'Buenos Aires';
+const cityName = 'London';
 
 async function fetchWeather(cityName: string): Promise<ApiResponse> {
   const apiKey = '6be8c28794924ed8a2a184922222905';
@@ -45,16 +49,19 @@ function App(): React.JSX.Element {
   const [clima, setClima] = useState<ApiResponse | null>(null);
 
   const backgroundStyle = {
-    backgroundColor: '#ba91f2',
+    backgroundColor: colors.pink,
   };
 
   useEffect(() => {
-    fetchWeather(cityName)
-      .then(data => {
-        setClima(data);
-        console.log(data);
-      })
-      .catch(error => console.error('Error fetching weather data:', error));
+    getCurrentWeather(cityName).then((data: ApiResponse) => {
+      setClima(data);
+    });
+    // fetchWeather(cityName)
+    //   .then(data => {
+    //     setClima(data);
+    //     console.log(data);
+    //   })
+    //   .catch(error => console.error('Error fetching weather data:', error));
   }, []);
 
   return (
@@ -66,18 +73,16 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <StyledContainer>
-          {clima && (
-            <View>
-              <Text style={styles.sectionTitle}>{clima.location.name}</Text>
-              {/* <Image source={{uri: `${clima.current.condition.icon}`}} /> */}
-              <Text style={styles.sectionTitle}>{clima.current.temp_c}ºC</Text>
-              <Text style={styles.sectionTitle}>
-                ST {clima.current.feelslike_c}ºC
-              </Text>
-            </View>
-          )}
-        </StyledContainer>
+        {clima && (
+          <HorizontalContainer>
+            <Text style={styles.sectionTitle}>{clima.location.name}</Text>
+            {/* <Image source={{uri: `${clima.current.condition.icon}`}} /> */}
+            <Text style={styles.sectionTitle}>{clima.current.temp_c}ºC</Text>
+            <Text style={styles.sectionTitle}>
+              ST {clima.current.feelslike_c}ºC
+            </Text>
+          </HorizontalContainer>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -89,9 +94,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   sectionTitle: {
+    fontFamily: fonts.Poppins.Bold,
     fontSize: 24,
-    fontWeight: '600',
-    color: 'white',
+    fontWeight: '200',
+    color: colors.white,
   },
   sectionDescription: {
     marginTop: 8,
