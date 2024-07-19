@@ -1,3 +1,6 @@
+import {PermissionsAndroid} from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+
 export const colors = {
   white: '#fff',
   black: '#171717',
@@ -19,3 +22,28 @@ export const fonts = {
     Bolder: 'Poppins-Bold',
   },
 };
+
+export async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+    );
+
+    if (granted) {
+      console.log('Location permission granted');
+    } else {
+      console.error('Location permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+}
+
+export function geo() {
+  return new Promise((resolve, reject) => {
+    Geolocation.getCurrentPosition(
+      info => resolve(info),
+      err => reject(err),
+    );
+  });
+}

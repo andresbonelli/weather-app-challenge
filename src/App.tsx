@@ -7,62 +7,96 @@
 
 import React from 'react';
 import {useState, useEffect} from 'react';
-import {getCurrentWeather, getForecast} from './api.ts';
+import {
+  getCurrentWeatherFromCityName,
+  getCurrentWeatherFromGeo,
+  getCurrentWeatherFromLocation,
+  getForecast,
+  searchCity,
+} from './api.ts';
 
 import {
+  FlatList,
+  Keyboard,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableWithoutFeedback,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {colors, fonts} from './utils.js';
+import {colors, fonts, geo, requestLocationPermission} from './utils.js';
+
 import {
   HorizontalContainer,
   VerticalContainer,
+  MainContainer,
 } from './styled/StyledContainers.js';
-import {Image} from 'react-native-svg';
-const cityName = 'London';
-
-async function fetchWeather(cityName: string): Promise<ApiResponse> {
-  const apiKey = '6be8c28794924ed8a2a184922222905';
-  const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${cityName}`;
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data: ApiResponse = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch weather data:', error);
-    throw error; // Rethrow the error to handle it outside this function if needed
-  }
-}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const [clima, setClima] = useState<ApiResponse | null>(null);
+  const [currentCityName, setCurrenCityName] = useState('');
+  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+  const [currentWeather, setCurrentWeather] = useState<ApiResponse | null>(
+    null,
+  );
+  const [searchResult, setSearchResult] = useState<Location[] | []>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const backgroundStyle = {
     backgroundColor: colors.pink,
   };
 
   useEffect(() => {
-    getCurrentWeather(cityName).then((data: ApiResponse) => {
-      setClima(data);
+    requestLocationPermission();
+    geo().then(info => {
+      console.log(info.coords.latitude + ', ' + info.coords.longitude);
+      getCurrentWeatherFromGeo({
+        lat: info.coords.latitude,
+        lon: info.coords.longitude,
+      }).then((data: ApiResponse | null) => {
+        if (data) {
+          console.log(data);
+          setCurrentWeather(data);
+        }
+        return;
+      });
     });
-    // fetchWeather(cityName)
-    //   .then(data => {
-    //     setClima(data);
-    //     console.log(data);
-    //   })
-    //   .catch(error => console.error('Error fetching weather data:', error));
   }, []);
+
+  // useEffect(() => {
+  //   getCurrentWeatherFromCityName(currentCityName).then(
+  //     (data: ApiResponse | null) => {
+  //       if (data) {
+  //         setCurrentWeather(data);
+  //       }
+  //       return;
+  //     },
+  //   );
+  // }, []);
+
+  useEffect(() => {
+    getCurrentWeatherFromLocation(currentLocation).then((data: ApiResponse) => {
+      setCurrentWeather(data);
+    });
+  }, [currentLocation]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      searchCity(searchQuery)
+        .then((data: Location[]) => {
+          setSearchResult(data);
+        })
+        .catch((error: Error) => {
+          console.log(error);
+        });
+    }
+  }, [searchQuery]);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -73,13 +107,45 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        {clima && (
+        <TextInput
+          placeholder="Buscar por ciudad, país, CP..."
+          onChangeText={text => setSearchQuery(text)}></TextInput>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          {searchQuery ? (
+            <>
+              {searchResult.map(location => (
+                <Pressable
+                  key={location.tz_id}
+                  onPress={() => {
+                    setCurrentLocation(location);
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: fonts.Poppins.Bold,
+                      fontSize: 24,
+                      fontWeight: '200',
+                      color: colors.white,
+                    }}>
+                    {location.name}, {location.region}
+                  </Text>
+                </Pressable>
+              ))}
+            </>
+          ) : (
+            <></>
+          )}
+        </TouchableWithoutFeedback>
+        {currentWeather && (
           <HorizontalContainer>
-            <Text style={styles.sectionTitle}>{clima.location.name}</Text>
-            {/* <Image source={{uri: `${clima.current.condition.icon}`}} /> */}
-            <Text style={styles.sectionTitle}>{clima.current.temp_c}ºC</Text>
             <Text style={styles.sectionTitle}>
-              ST {clima.current.feelslike_c}ºC
+              {currentWeather.location.name}
+            </Text>
+            {/* <Image source={{uri: `${clima.current.condition.icon}`}} /> */}
+            <Text style={styles.sectionTitle}>
+              {currentWeather.current.temp_c}ºC
+            </Text>
+            <Text style={styles.sectionTitle}>
+              ST {currentWeather.current.feelslike_c}ºC
             </Text>
           </HorizontalContainer>
         )}
