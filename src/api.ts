@@ -38,7 +38,7 @@ export async function getCurrentWeatherFromLocation(
     const response = await axios.get(baseUrl + '/current.json', {
       params: {
         key: apiKey,
-        q: location ? `${location.lat},${location.lon}` : 'Buenos Aires',
+        q: location ? `${location.lat},${location.lon}` : '',
       },
     });
     if (response.status === 200) {
@@ -54,6 +54,7 @@ export async function getCurrentWeatherFromLocation(
   }
 }
 
+// [GET] - Current weather data from Geo coords (lat,lon)
 export async function getCurrentWeatherFromGeo(
   coords: {lat: number; lon: number} | null,
 ): Promise<ApiResponse> {
@@ -78,12 +79,14 @@ export async function getCurrentWeatherFromGeo(
 }
 
 // [GET] - 3 day forecast weather data for specific location (city).
-export async function getForecast(city: string): Promise<ApiResponse> {
+export async function getForecast(
+  location: Location,
+): Promise<ForecastResponse> {
   try {
     const response = await axios.get(baseUrl + '/forecast.json', {
       params: {
         key: apiKey,
-        q: city,
+        q: `${location.lat},${location.lon}`,
         days: 3,
       },
     });

@@ -47,3 +47,7 @@ export function geo() {
     );
   });
 }
+
+export function coordsToString(lat, lon) {
+  return String(lat) + ',' + String(lon);
+}

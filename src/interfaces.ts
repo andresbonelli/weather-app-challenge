@@ -5,6 +5,7 @@ interface Location {
   lat: number;
   lon: number;
   tz_id: string;
+  id?: number;
   localtime_epoch: number;
   localtime: string;
 }
