@@ -1,4 +1,7 @@
 import React, {useState, useEffect} from 'react';
+import {colors, fonts, geo, requestLocationPermission} from '../utils.js';
+import Gradient from '../components/Gradient.jsx';
+
 import {
   getCurrentWeatherFromGeo,
   getCurrentWeatherFromLocation,
@@ -6,6 +9,7 @@ import {
 } from '../api.ts';
 
 import {
+  Dimensions,
   Keyboard,
   Pressable,
   ScrollView,
@@ -17,23 +21,34 @@ import {
   StatusBar,
   useColorScheme,
   Image,
+  View,
 } from 'react-native';
-
-import {colors, fonts, geo, requestLocationPermission} from '../utils.js';
 
 import {
   HorizontalContainer,
   VerticalContainer,
 } from '../styled/StyledContainers.js';
 
+import {
+  DateLabel,
+  BigTempLabel,
+  OtherCitiesLabel,
+} from '../styled/StyledLabels.js';
+import SearchBar from '../components/SearchBar.jsx';
+
 export default function Home({navigation}: any) {
   const isDarkMode = useColorScheme() === 'dark';
+  const height = Dimensions.get('window').height;
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [currentWeather, setCurrentWeather] = useState<ApiResponse | null>(
     null,
   );
-  const [searchResult, setSearchResult] = useState<Location[] | []>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
 
   useEffect(() => {
     requestLocationPermission();
@@ -46,7 +61,7 @@ export default function Home({navigation}: any) {
         if (data) {
           console.log(data);
           setCurrentWeather(data);
-          setSearchResult([]);
+          Keyboard.dismiss();
         }
         return;
       });
@@ -59,17 +74,9 @@ export default function Home({navigation}: any) {
     });
   }, [currentLocation]);
 
-  useEffect(() => {
-    if (searchQuery) {
-      searchCity(searchQuery)
-        .then((data: Location[]) => {
-          setSearchResult(data);
-        })
-        .catch((error: Error) => {
-          console.log(error);
-        });
-    }
-  }, [searchQuery]);
+  function handleSearchPress(location: Location) {
+    setCurrentLocation(location);
+  }
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
@@ -77,74 +84,53 @@ export default function Home({navigation}: any) {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={styles.backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={styles.backgroundStyle}>
-        <TextInput
-          placeholder={
-            currentLocation
-              ? `${currentLocation.name}, ${currentLocation.country}`
-              : 'Buscar por ciudad...'
-          }
-          onChangeText={text => setSearchQuery(text)}></TextInput>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          {searchQuery ? (
-            <>
-              {searchResult.map(location => (
-                <Pressable
-                  key={location.id}
-                  onPress={() => {
-                    setCurrentLocation(location);
-                    setSearchResult([]);
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: fonts.Poppins.Bold,
-                      fontSize: 24,
-                      fontWeight: '200',
-                      color: colors.white,
-                    }}>
-                    {location.name}, {location.region}
-                  </Text>
-                </Pressable>
-              ))}
-            </>
-          ) : (
-            <></>
-          )}
-        </TouchableWithoutFeedback>
+      <View style={styles.backgroundGradient}>
+        <Gradient
+          colorFrom={colors.lightBlue}
+          colorTo={colors.darkViolet}
+          id="top-card"
+          borderRadius={20}
+          orientation={'vertical'}
+          height={height}
+        />
+      </View>
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <DateLabel>{today}</DateLabel>
+        <SearchBar
+          currentLocation={currentLocation}
+          onSearchPress={handleSearchPress}
+        />
+
         {currentWeather && (
-          <VerticalContainer style={styles.backgroundStyle}>
-            <Text style={styles.sectionTitle}>
-              {currentWeather.current.temp_c}ºC
-            </Text>
-
-            <Image
-              source={{
-                uri: `https://${currentWeather.current.condition.icon}`,
-              }}
-              style={{width: 50, height: 50}}
-              resizeMode="contain"
-            />
-
-            <Text style={styles.sectionDescription}>Wind</Text>
-            <Text style={styles.sectionDescription}>
-              {currentWeather.current.wind_degree}
-            </Text>
-            <Text style={styles.sectionDescription}>Humidity</Text>
-            <Text style={styles.sectionDescription}>
-              {currentWeather.current.humidity}%
-            </Text>
-            <Text
-              style={styles.sectionDescription}
-              onPress={() =>
-                navigation.navigate('details', {location: currentLocation})
-              }>
-              Detailed
-            </Text>
-            <Text style={styles.sectionDescription}>Other cities</Text>
-            <HorizontalContainer></HorizontalContainer>
-          </VerticalContainer>
+          <>
+            <BigTempLabel>{currentWeather.current.temp_c}ºC</BigTempLabel>
+            <HorizontalContainer>
+              <Image
+                source={{
+                  uri: `https://${currentWeather.current.condition.icon}`,
+                }}
+                style={{
+                  width: 200,
+                  height: 200,
+                }}
+                resizeMode="contain"
+              />
+              <VerticalContainer style={{alignItems: 'flex-start'}}>
+                <Text>Wind</Text>
+                <Text>{currentWeather.current.wind_degree}</Text>
+                <Text>Humidity</Text>
+                <Text>{currentWeather.current.humidity}%</Text>
+                <Text
+                  onPress={() =>
+                    navigation.navigate('details', {location: currentLocation})
+                  }>
+                  Detailed
+                </Text>
+                <HorizontalContainer></HorizontalContainer>
+              </VerticalContainer>
+            </HorizontalContainer>
+            <OtherCitiesLabel>Other cities:</OtherCitiesLabel>
+          </>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -152,6 +138,12 @@ export default function Home({navigation}: any) {
 }
 
 const styles = StyleSheet.create({
+  backgroundGradient: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: -9999,
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,

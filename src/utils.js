@@ -3,6 +3,7 @@ import Geolocation from '@react-native-community/geolocation';
 
 export const colors = {
   white: '#fff',
+  gray: '#cfcfcf',
   black: '#171717',
   pitchBlack: '#000',
   pink: '#ba91f2',
