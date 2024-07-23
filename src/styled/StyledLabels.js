@@ -1,4 +1,4 @@
-import {Text, View, ScrollView} from 'react-native';
+import {Text} from 'react-native';
 import {colors, fonts} from '../utils';
 import styled from 'styled-components';
 
@@ -20,7 +20,21 @@ export const BigTempLabel = styled(Text)`
   padding-left: 20px;
 `;
 
-export const OtherCitiesLabel = styled(Text)`
+export const WeatherLabel = styled(Text)`
+  color: ${colors.lightBlue};
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 600;
+  font-size: 15px;
+`;
+
+export const WeatherData = styled(Text)`
+  color: ${colors.white};
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 600;
+  font-size: 25px;
+`;
+
+export const OtherCitiesHeading = styled(Text)`
   font-size: 16px;
   font-family: ${fonts.Poppins.Bolder};
   font-weight: 700;
@@ -28,4 +42,32 @@ export const OtherCitiesLabel = styled(Text)`
   padding-left: 20px;
   padding-top: 20px;
   padding-bottom: 0px;
+`;
+
+export const OtherCityLabel = styled(Text)`
+  color: ${colors.pink};
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 600;
+  font-size: 12px;
+`;
+
+export const OtherCityName = styled(Text)`
+  color: ${colors.white};
+  font-family: ${fonts.Poppins.Medium};
+  font-weight: 600;
+  font-size: 16px;
+`;
+
+export const OtherCityWeather = styled(Text)`
+  color: ${colors.lightBlue};
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 600;
+  font-size: 10px;
+`;
+
+export const OtherCityWeatherData = styled(Text)`
+  color: ${colors.white};
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 600;
+  font-size: 17px;
 `;

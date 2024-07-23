@@ -1,22 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {colors, fonts, geo, requestLocationPermission} from '../utils.js';
+import {colors, geo, requestLocationPermission} from '../utils.js';
 import Gradient from '../components/Gradient.jsx';
 
 import {
   getCurrentWeatherFromGeo,
   getCurrentWeatherFromLocation,
-  searchCity,
 } from '../api.ts';
 
 import {
   Dimensions,
   Keyboard,
-  Pressable,
   ScrollView,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  StyleSheet,
   SafeAreaView,
   StatusBar,
   useColorScheme,
@@ -26,15 +20,21 @@ import {
 
 import {
   HorizontalContainer,
+  OtherCitiesContainer,
   VerticalContainer,
 } from '../styled/StyledContainers.js';
 
 import {
   DateLabel,
   BigTempLabel,
-  OtherCitiesLabel,
+  OtherCitiesHeading,
+  WeatherData,
+  WeatherLabel,
 } from '../styled/StyledLabels.js';
+import {defaultStyles} from '../utils.js';
 import SearchBar from '../components/SearchBar.jsx';
+import {DetailsIcon} from '../components/Icons.js';
+import OtherCityCard from '../components/OtherCityCard.jsx';
 
 export default function Home({navigation}: any) {
   const isDarkMode = useColorScheme() === 'dark';
@@ -43,6 +43,7 @@ export default function Home({navigation}: any) {
   const [currentWeather, setCurrentWeather] = useState<ApiResponse | null>(
     null,
   );
+  const [otherCities, setOtherCities] = useState<ApiResponse[]>([]);
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
@@ -57,7 +58,7 @@ export default function Home({navigation}: any) {
       getCurrentWeatherFromGeo({
         lat: info.coords.latitude,
         lon: info.coords.longitude,
-      }).then((data: ApiResponse | null) => {
+      }).then((data: ApiResponse) => {
         if (data) {
           console.log(data);
           setCurrentWeather(data);
@@ -79,12 +80,13 @@ export default function Home({navigation}: any) {
   }
 
   return (
-    <SafeAreaView style={styles.backgroundStyle}>
+    <SafeAreaView style={defaultStyles.backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={styles.backgroundStyle.backgroundColor}
+        backgroundColor={defaultStyles.backgroundStyle.backgroundColor}
       />
-      <View style={styles.backgroundGradient}>
+      {/* Background */}
+      <View style={defaultStyles.backgroundGradient}>
         <Gradient
           colorFrom={colors.lightBlue}
           colorTo={colors.darkViolet}
@@ -94,6 +96,7 @@ export default function Home({navigation}: any) {
           height={height}
         />
       </View>
+      {/* End background */}
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <DateLabel>{today}</DateLabel>
         <SearchBar
@@ -104,63 +107,55 @@ export default function Home({navigation}: any) {
         {currentWeather && (
           <>
             <BigTempLabel>{currentWeather.current.temp_c}ºC</BigTempLabel>
-            <HorizontalContainer>
+            <HorizontalContainer style={{justifyContent: 'center'}}>
               <Image
                 source={{
                   uri: `https://${currentWeather.current.condition.icon}`,
                 }}
                 style={{
-                  width: 200,
-                  height: 200,
+                  width: 170,
+                  height: 170,
+                  marginRight: 35,
                 }}
                 resizeMode="contain"
               />
               <VerticalContainer style={{alignItems: 'flex-start'}}>
-                <Text>Wind</Text>
-                <Text>{currentWeather.current.wind_degree}</Text>
-                <Text>Humidity</Text>
-                <Text>{currentWeather.current.humidity}%</Text>
-                <Text
-                  onPress={() =>
-                    navigation.navigate('details', {location: currentLocation})
-                  }>
-                  Detailed
-                </Text>
-                <HorizontalContainer></HorizontalContainer>
+                <WeatherLabel>Wind</WeatherLabel>
+                <WeatherData>{currentWeather.current.wind_degree}</WeatherData>
+                <WeatherLabel>Humidity</WeatherLabel>
+                <WeatherData>{currentWeather.current.humidity}%</WeatherData>
+                <HorizontalContainer>
+                  <WeatherLabel
+                    onPress={() =>
+                      navigation.navigate('details', {
+                        location: currentLocation,
+                      })
+                    }>
+                    Detailed
+                  </WeatherLabel>
+                  <DetailsIcon
+                    color={colors.lightBlue}
+                    width={24}
+                    height={24}
+                  />
+                </HorizontalContainer>
               </VerticalContainer>
             </HorizontalContainer>
-            <OtherCitiesLabel>Other cities:</OtherCitiesLabel>
           </>
+        )}
+        <OtherCitiesHeading>Other cities:</OtherCitiesHeading>
+        {currentWeather && (
+          <OtherCitiesContainer
+            horizontal={true}
+            showsHorizontalScrollIndicator={true}>
+            <OtherCityCard weather={currentWeather} />
+            <OtherCityCard weather={currentWeather} />
+            <OtherCityCard weather={currentWeather} />
+            <OtherCityCard weather={currentWeather} />
+            <OtherCityCard weather={currentWeather} />
+          </OtherCitiesContainer>
         )}
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  backgroundGradient: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    zIndex: -9999,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  backgroundStyle: {
-    backgroundColor: colors.pink,
-  },
-});

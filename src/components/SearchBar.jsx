@@ -4,10 +4,14 @@ import {
   TouchableWithoutFeedback,
   Pressable,
   Text,
+  View,
 } from 'react-native';
 import {searchCity} from '../api';
 
 import {fonts, colors} from '../utils';
+import {StyledInput, SearchBarContainer} from '../styled/StyledInputs';
+import {HorizontalContainer} from '../styled/StyledContainers';
+import {LocationIcon, SliderIcon} from './Icons';
 
 export default function SearchBar({currentLocation, onSearchPress}) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,13 +31,17 @@ export default function SearchBar({currentLocation, onSearchPress}) {
 
   return (
     <>
-      <TextInput
-        placeholder={
-          currentLocation
-            ? `${currentLocation.name}, ${currentLocation.country}`
-            : 'Buscar por ciudad...'
-        }
-        onChangeText={text => setSearchQuery(text)}></TextInput>
+      <SearchBarContainer>
+        <LocationIcon color={colors.darkGray} width="20" height="20" />
+        <StyledInput
+          placeholder={
+            currentLocation
+              ? `${currentLocation.name}, ${currentLocation.country}`
+              : 'Buscar por ciudad...'
+          }
+          onChangeText={text => setSearchQuery(text)}></StyledInput>
+        <SliderIcon color={colors.darkGray} width="20" height="20" />
+      </SearchBarContainer>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {searchQuery ? (
           <>

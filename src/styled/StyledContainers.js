@@ -26,3 +26,10 @@ export const VerticalContainer = styled(View)`
 
   padding-horizontal: 10px;
 `;
+
+export const OtherCitiesContainer = styled(ScrollView)`
+  padding-left: 20px;
+  padding-bottom: 20px;
+  margin: 30px;
+  z-index: -999;
+`;

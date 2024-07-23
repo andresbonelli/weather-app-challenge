@@ -38,7 +38,7 @@ export async function getCurrentWeatherFromLocation(
     const response = await axios.get(baseUrl + '/current.json', {
       params: {
         key: apiKey,
-        q: location ? `${location.lat},${location.lon}` : '',
+        q: location ? `${location.lat},${location.lon}` : 'Buenos Aires',
       },
     });
     if (response.status === 200) {

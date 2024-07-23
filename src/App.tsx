@@ -18,7 +18,7 @@ function App(): React.JSX.Element {
         <Stack.Screen
           name="details"
           component={Details}
-          options={{headerShown: true, title: 'Details Screen'}}
+          options={{headerShown: false, title: 'Details Screen'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
