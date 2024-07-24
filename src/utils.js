@@ -12,6 +12,7 @@ export const colors = {
   lightViolet: '#7f0cf2',
   purple: '#3d0b63',
   lightBlue: '#6BA4EB',
+  cyan: '#D2DFFC',
   orange: '#f2b705',
 };
 
@@ -30,7 +31,13 @@ export const defaultStyles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    zIndex: -9999,
+    zIndex: -999,
+  },
+  darkTitle: {
+    fontFamily: fonts.Poppins.Medium,
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.black,
   },
   sectionContainer: {
     marginTop: 32,

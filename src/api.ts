@@ -86,7 +86,7 @@ export async function getForecast(
     const response = await axios.get(baseUrl + '/forecast.json', {
       params: {
         key: apiKey,
-        q: `${location.lat},${location.lon}`,
+        q: location ? `${location.lat},${location.lon}` : 'Buenos Aires',
         days: 3,
       },
     });

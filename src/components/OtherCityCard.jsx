@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image} from 'react-native';
-import {CityCard} from '../styled/StyledCards';
+import {CityCardView} from '../styled/StyledCards';
 import {
   OtherCityLabel,
   OtherCityName,
@@ -15,7 +15,7 @@ import {
 export default function OtherCityCard({weather}) {
   return (
     <>
-      <CityCard>
+      <CityCardView>
         <VerticalContainer>
           <HorizontalContainer>
             <Image
@@ -56,7 +56,7 @@ export default function OtherCityCard({weather}) {
             </VerticalContainer>
           </HorizontalContainer>
         </VerticalContainer>
-      </CityCard>
+      </CityCardView>
     </>
   );
 }

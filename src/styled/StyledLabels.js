@@ -20,6 +20,15 @@ export const BigTempLabel = styled(Text)`
   padding-left: 20px;
 `;
 
+export const DetailsTempLabel = styled(Text)`
+  font-size: 45px;
+  text-align: left;
+  font-family: ${fonts.Poppins.Bolder};
+  font-weight: 700;
+  color: ${colors.white};
+  margin-top: 20px;
+`;
+
 export const WeatherLabel = styled(Text)`
   color: ${colors.lightBlue};
   font-family: ${fonts.Poppins.Bold};

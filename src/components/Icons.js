@@ -1,4 +1,5 @@
 import React from 'react';
+import {View} from 'react-native';
 import Svg, {Path, Line} from 'react-native-svg';
 
 // Arrow Left
@@ -6,19 +7,12 @@ export function ArrowLeft({color, width, height}) {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20">
       <Path
-        d="M717.577,681.5l4.814,5.567L727.2,681.5"
-        transform="translate(742.675 -657.107) rotate(90)"
+        d="M10 2 L2 10 L10 18 M20 10 L10 10"
         stroke={color}
-        strokeWidth="3"
+        strokeWidth="2"
+        fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-      <Line
-        x2="12"
-        transform="translate(38.5 60.5)"
-        stroke={color}
-        strokeWidth="3"
-        strokeLinecap="round"
       />
     </Svg>
   );
