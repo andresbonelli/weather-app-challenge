@@ -43,6 +43,7 @@ export const WeatherData = styled(Text)`
   font-size: 25px;
 `;
 
+// OTHER CITIES
 export const OtherCitiesHeading = styled(Text)`
   font-size: 16px;
   font-family: ${fonts.Poppins.Bolder};
@@ -79,4 +80,42 @@ export const OtherCityWeatherData = styled(Text)`
   font-family: ${fonts.Poppins.Bold};
   font-weight: 600;
   font-size: 17px;
+`;
+
+// FORECAST DAY PHASES
+export const ForecastDayPhase = styled(Text)`
+  font-size: 16px;
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 600;
+  color: ${colors.black};
+`;
+
+export const ForecastTemp = styled(Text)`
+  font-size: 18px;
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 700;
+  color: ${colors.black};
+`;
+
+export const ForecastHumidity = styled(Text)`
+  font-size: 16px;
+  font-family: ${fonts.Poppins.Medium};
+  font-weight: 600;
+  color: ${colors.black};
+`;
+
+// FORECAST PARAMETERS
+
+export const ForecastParameterName = styled(Text)`
+  font-size: 16px;
+  font-family: ${fonts.Poppins.Bold};
+  font-weight: 700;
+  color: ${colors.black};
+`;
+
+export const ForecastParameterValue = styled(Text)`
+  font-size: 14px;
+  font-family: ${fonts.Poppins.Medium};
+  font-weight: 600;
+  color: ${colors.black};
 `;

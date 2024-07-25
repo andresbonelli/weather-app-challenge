@@ -1,8 +1,8 @@
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import styled from 'styled-components';
 import {colors} from '../utils';
 
-export const CityCardView = styled(View)`
+export const CityCardView = styled(TouchableOpacity)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,7 +17,7 @@ export const CityCardView = styled(View)`
   margin-right: 9px;
 `;
 
-export const ForecastCardView = styled(View)`
+export const ForecastCardView = styled(TouchableOpacity)`
   display: flex;
   flex-direction: column;
   align-items: center;

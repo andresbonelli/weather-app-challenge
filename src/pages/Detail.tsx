@@ -1,12 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-} from 'react-native';
+import {getForecast} from '../api';
+import {colors, defaultStyles} from '../utils';
+import {View, Text, Dimensions, TouchableOpacity, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   VerticalContainer,
@@ -17,23 +12,24 @@ import {
   ParameterCardsContainer,
   DetailsBottomContainer,
 } from '../styled/StyledContainers';
-import Gradient from '../components/Gradient';
-import {colors, defaultStyles} from '../utils';
 
-import {getForecast} from '../api';
-import {ArrowLeft} from '../components/Icons';
 import {DetailsTempLabel, WeatherLabel} from '../styled/StyledLabels';
 import {
   DetailsBottomToggler,
   ForecastButton,
   ForecastButtonContainer,
 } from '../styled/StyledButtons';
-import {ForecastCardView, ParameterCardView} from '../styled/StyledCards';
+import Gradient from '../components/Gradient';
+import {ArrowLeft} from '../components/Icons';
+import ForecastCard from '../components/ForecastCard';
+import ParameterCard from '../components/ParameterCard';
 
 export default function Details({navigation, route}: any) {
   const height = Dimensions.get('window').height;
   const currentLocation: Location = route.params.location;
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
+  const [currentDayIndex, setCurrentDayIndex] = useState(0);
+  const [currentHourIndex, setCurrentHourIndex] = useState(8);
 
   const hour = new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -44,6 +40,14 @@ export default function Details({navigation, route}: any) {
   useEffect(() => {
     getForecast(currentLocation).then(forecast => setForecast(forecast));
   }, []);
+
+  function handleChangeDayButtonPress() {
+    setCurrentDayIndex(currentState => (currentState === 0 ? 1 : 0));
+  }
+
+  function handleChangeHourButtonPress(hour: number) {
+    setCurrentHourIndex(hour);
+  }
 
   return (
     <SafeAreaView>
@@ -70,7 +74,6 @@ export default function Details({navigation, route}: any) {
             <WeatherLabel style={{color: colors.gray}}>
               {forecast?.location.name}, {forecast?.location.region},
             </WeatherLabel>
-
             <WeatherLabel style={{color: colors.gray}}>
               {forecast?.location.country}
             </WeatherLabel>
@@ -96,31 +99,76 @@ export default function Details({navigation, route}: any) {
         <HorizontalContainer
           style={{justifyContent: 'space-between', paddingTop: 40}}>
           <Text style={defaultStyles.darkTitle}>Forecast:</Text>
-          <ForecastButtonContainer>
-            <ForecastButton>Tomorrow</ForecastButton>
+          <ForecastButtonContainer onPress={handleChangeDayButtonPress}>
+            <ForecastButton>
+              {currentDayIndex === 0 ? 'Tomorrow' : 'Today'}
+            </ForecastButton>
           </ForecastButtonContainer>
         </HorizontalContainer>
-        <ForecastCardsContainer
-          horizontal={true}
-          showsHorizontalScrollIndicator={true}>
-          <ForecastCardView></ForecastCardView>
-          <ForecastCardView></ForecastCardView>
-          <ForecastCardView></ForecastCardView>
-          <ForecastCardView></ForecastCardView>
-        </ForecastCardsContainer>
+
+        {forecast && (
+          <ForecastCardsContainer
+            horizontal={true}
+            showsHorizontalScrollIndicator={true}>
+            <ForecastCard
+              onCardPress={() => handleChangeHourButtonPress(8)}
+              dayPhase={'Morning'}
+              forecastHour={
+                forecast?.forecast.forecastday[currentDayIndex].hour[8]
+              }></ForecastCard>
+            <ForecastCard
+              onCardPress={() => handleChangeHourButtonPress(14)}
+              dayPhase={'Afternoon'}
+              forecastHour={
+                forecast?.forecast.forecastday[currentDayIndex].hour[14]
+              }></ForecastCard>
+            <ForecastCard
+              onCardPress={() => handleChangeHourButtonPress(18)}
+              dayPhase={'Evening'}
+              forecastHour={
+                forecast?.forecast.forecastday[currentDayIndex].hour[18]
+              }></ForecastCard>
+            <ForecastCard
+              onCardPress={() => handleChangeHourButtonPress(22)}
+              dayPhase={'Night'}
+              forecastHour={
+                forecast?.forecast.forecastday[currentDayIndex].hour[22]
+              }></ForecastCard>
+          </ForecastCardsContainer>
+        )}
       </DetailsMidContainer>
       {/* BOTTOM SECTION */}
       {/* TODO: Expand up section */}
       <DetailsBottomContainer>
         <DetailsBottomToggler></DetailsBottomToggler>
-        <ParameterCardsContainer>
-          <ParameterCardView></ParameterCardView>
-          <ParameterCardView></ParameterCardView>
-          <ParameterCardView></ParameterCardView>
-          <ParameterCardView></ParameterCardView>
-          <ParameterCardView></ParameterCardView>
-          <ParameterCardView></ParameterCardView>
-        </ParameterCardsContainer>
+        {forecast && (
+          <ParameterCardsContainer>
+            <ParameterCard
+              imgSource={''}
+              parameter={'UV Index'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].uv} of 10`}></ParameterCard>
+            <ParameterCard
+              imgSource={''}
+              parameter={'Humidity'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].humidity}%`}></ParameterCard>
+            <ParameterCard
+              imgSource={''}
+              parameter={'High / Low'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].day.maxtemp_c} / ${forecast?.forecast.forecastday[currentDayIndex].day.mintemp_c}`}></ParameterCard>
+            <ParameterCard
+              imgSource={''}
+              parameter={'Moon Phase'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].astro.moon_phase}`}></ParameterCard>
+            <ParameterCard
+              imgSource={''}
+              parameter={'Dew Point'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].dewpoint_c}ºC`}></ParameterCard>
+            <ParameterCard
+              imgSource={''}
+              parameter={'Visibility'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].vis_km} km.`}></ParameterCard>
+          </ParameterCardsContainer>
+        )}
       </DetailsBottomContainer>
     </SafeAreaView>
   );
