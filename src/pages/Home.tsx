@@ -5,6 +5,7 @@ import Gradient from '../components/Gradient.jsx';
 import {
   getCurrentWeatherFromGeo,
   getCurrentWeatherFromLocation,
+  getOtherCities,
 } from '../api.ts';
 
 import {
@@ -31,7 +32,7 @@ import {
   WeatherData,
   WeatherLabel,
 } from '../styled/StyledLabels.js';
-import {defaultStyles} from '../utils.js';
+import {defaultStyles, dummyApiResponse} from '../utils.js';
 import SearchBar from '../components/SearchBar.jsx';
 import {DetailsIcon} from '../components/Icons.js';
 import OtherCityCard from '../components/OtherCityCard.jsx';
@@ -43,7 +44,10 @@ export default function Home({navigation}: any) {
   const [currentWeather, setCurrentWeather] = useState<ApiResponse | null>(
     null,
   );
-  const [otherCities, setOtherCities] = useState<ApiResponse[]>([]);
+  const [favoriteCities, setFavoriteCities] = useState<(ApiResponse | null)[]>(
+    [],
+  );
+  const [favorites, setFavorites] = useState<(Location | null)[]>([]);
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
@@ -51,32 +55,59 @@ export default function Home({navigation}: any) {
     month: 'short',
   });
 
-  useEffect(() => {
-    requestLocationPermission();
-    geo().then(info => {
-      console.log(info.coords.latitude + ', ' + info.coords.longitude);
-      getCurrentWeatherFromGeo({
-        lat: info.coords.latitude,
-        lon: info.coords.longitude,
-      }).then((data: ApiResponse) => {
-        if (data) {
-          console.log(data);
-          setCurrentWeather(data);
-          Keyboard.dismiss();
-        }
-        return;
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   requestLocationPermission();
+  //   geo().then(info => {
+  //     console.log(info.coords.latitude + ', ' + info.coords.longitude);
+  //     getCurrentWeatherFromGeo({
+  //       lat: info.coords.latitude,
+  //       lon: info.coords.longitude,
+  //     }).then((data: ApiResponse) => {
+  //       if (data) {
+  //         console.log(data);
+  //         setCurrentWeather(data);
+  //         Keyboard.dismiss();
+  //       }
+  //       return;
+  //     });
+  //   });
+  // }, []);
 
   useEffect(() => {
     getCurrentWeatherFromLocation(currentLocation).then((data: ApiResponse) => {
       setCurrentWeather(data);
+      setCurrentLocation(data.location);
     });
-  }, [currentLocation]);
+  }, []);
+
+  useEffect(() => {
+    getOtherCities(favorites).then(cities => setFavoriteCities(cities));
+  }, [favorites]);
 
   function handleSearchPress(location: Location) {
     setCurrentLocation(location);
+  }
+
+  function handleAddToFavorites() {
+    if (currentLocation) {
+      const isAlreadyFavorite = favorites.includes(currentLocation);
+      let updatedFavorites: (Location | null)[];
+      if (isAlreadyFavorite) {
+        updatedFavorites = favorites.filter(
+          favorite => favorite !== currentLocation,
+        );
+        console.log('removing from favorites: ', currentLocation.name);
+      } else {
+        updatedFavorites = [...favorites, currentLocation];
+        console.log('Adding to favorites: ', currentLocation.name);
+      }
+      setFavorites(updatedFavorites);
+    }
+  }
+
+  function handleRetrieveFromFavorites(city: ApiResponse) {
+    setCurrentLocation(city.location);
+    setCurrentWeather(city);
   }
 
   return (
@@ -98,12 +129,17 @@ export default function Home({navigation}: any) {
       </View>
       {/* End background */}
       <ScrollView contentInsetAdjustmentBehavior="automatic">
+        {/* Top Section: Search Bar */}
         <DateLabel>{today}</DateLabel>
         <SearchBar
           currentLocation={currentLocation}
           onSearchPress={handleSearchPress}
+          onAddToFavorites={handleAddToFavorites}
+          isFavorite={favorites.includes(currentLocation)}
         />
+        {/* End Top Section */}
 
+        {/* Mid Section: Current Weather overview */}
         {currentWeather && (
           <>
             <BigTempLabel>{currentWeather.current.temp_c}ºC</BigTempLabel>
@@ -143,18 +179,29 @@ export default function Home({navigation}: any) {
             </HorizontalContainer>
           </>
         )}
-        <OtherCitiesHeading>Other cities:</OtherCitiesHeading>
-        {currentWeather && (
+        {/* End Mid Section */}
+
+        {/* Bottom Section: Favorites */}
+        <OtherCitiesHeading>Favorites:</OtherCitiesHeading>
+
+        {favoriteCities.length > 0 && (
           <OtherCitiesContainer
             horizontal={true}
             showsHorizontalScrollIndicator={true}>
-            <OtherCityCard weather={currentWeather} />
-            <OtherCityCard weather={currentWeather} />
-            <OtherCityCard weather={currentWeather} />
-            <OtherCityCard weather={currentWeather} />
-            <OtherCityCard weather={currentWeather} />
+            {favoriteCities.map(city => {
+              if (city) {
+                return (
+                  <OtherCityCard
+                    key={city.location.name}
+                    weather={city}
+                    onRetrieve={() => handleRetrieveFromFavorites(city)}
+                  />
+                );
+              }
+            })}
           </OtherCitiesContainer>
         )}
+        {/* End Bottom Section */}
       </ScrollView>
     </SafeAreaView>
   );

@@ -12,10 +12,10 @@ import {
   VerticalContainer,
 } from '../styled/StyledContainers';
 
-export default function OtherCityCard({weather}) {
+export default function OtherCityCard({weather, onRetrieve}) {
   return (
     <>
-      <CityCardView>
+      <CityCardView onPress={onRetrieve}>
         <VerticalContainer>
           <HorizontalContainer>
             <Image

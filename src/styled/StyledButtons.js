@@ -24,6 +24,6 @@ export const ForecastButton = styled(Text)`
 export const DetailsBottomToggler = styled(View)`
   height: 5px;
   width: 50px;
-  background-color: ${colors.blue};
-  margin-bottom: 20px;
+  background-color: ${colors.lightBlue};
+  margin-top: 20px;
 `;

@@ -140,31 +140,31 @@ export default function Details({navigation, route}: any) {
       {/* BOTTOM SECTION */}
       {/* TODO: Expand up section */}
       <DetailsBottomContainer>
-        <DetailsBottomToggler></DetailsBottomToggler>
+        {/* <DetailsBottomToggler></DetailsBottomToggler> */}
         {forecast && (
           <ParameterCardsContainer>
             <ParameterCard
-              imgSource={''}
+              imgSource={require('../../assets/images/uvindex.png')}
               parameter={'UV Index'}
               value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].uv} of 10`}></ParameterCard>
             <ParameterCard
-              imgSource={''}
+              imgSource={require('../../assets/images/humidity.png')}
               parameter={'Humidity'}
               value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].humidity}%`}></ParameterCard>
             <ParameterCard
-              imgSource={''}
+              imgSource={require('../../assets/images/high-low.png')}
               parameter={'High / Low'}
               value={`${forecast?.forecast.forecastday[currentDayIndex].day.maxtemp_c} / ${forecast?.forecast.forecastday[currentDayIndex].day.mintemp_c}`}></ParameterCard>
             <ParameterCard
-              imgSource={''}
+              imgSource={require('../../assets/images/moonphase.png')}
               parameter={'Moon Phase'}
               value={`${forecast?.forecast.forecastday[currentDayIndex].astro.moon_phase}`}></ParameterCard>
             <ParameterCard
-              imgSource={''}
+              imgSource={require('../../assets/images/dewpoint.png')}
               parameter={'Dew Point'}
               value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].dewpoint_c}ºC`}></ParameterCard>
             <ParameterCard
-              imgSource={''}
+              imgSource={require('../../assets/images/visibility.png')}
               parameter={'Visibility'}
               value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].vis_km} km.`}></ParameterCard>
           </ParameterCardsContainer>

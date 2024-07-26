@@ -6,8 +6,8 @@ const baseUrl = 'http://api.weatherapi.com/v1/';
 // [GET] - Current weather data from city Name.
 export async function getCurrentWeatherFromCityName(
   city: string,
-): Promise<ApiResponse | null> {
-  if (city !== '') {
+): Promise<ApiResponse> {
+  {
     try {
       const response = await axios.get(baseUrl + '/current.json', {
         params: {
@@ -27,7 +27,6 @@ export async function getCurrentWeatherFromCityName(
       throw error; // Rethrow the error to handle it outside this function if needed
     }
   }
-  return null;
 }
 
 // [GET] - Current weather data from Location interface.
@@ -101,6 +100,21 @@ export async function getForecast(
     console.error('Failed to fetch forectast:', error);
     throw error; // Rethrow the error to handle it outside this function if needed
   }
+}
+
+// [GET] - Current weather for other cities (from Favorites)
+export async function getOtherCities(
+  favorites: (Location | null)[],
+): Promise<ApiResponse[]> {
+  const cities: ApiResponse[] = [];
+  await Promise.all(
+    favorites.map(city => {
+      return getCurrentWeatherFromLocation(city).then(data =>
+        cities.push(data),
+      );
+    }),
+  );
+  return cities;
 }
 
 // [GET] - Search / Autocomplete function.
