@@ -11,7 +11,7 @@ export default function SearchBar({
   currentLocation,
   onSearchPress,
   onAddToFavorites,
-  isFavorite,
+  favorite,
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState([]);
@@ -43,7 +43,7 @@ export default function SearchBar({
           onChangeText={text => setSearchQuery(text)}></StyledInput>
         <Pressable onPress={() => onAddToFavorites()}>
           <View style={{transform: 'translate(0px, -2px)'}}>
-            {isFavorite ? (
+            {favorite ? (
               <StarIcon
                 color={colors.orange}
                 width="26"

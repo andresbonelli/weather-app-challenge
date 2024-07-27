@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {colors, geo, requestLocationPermission} from '../utils.js';
 import Gradient from '../components/Gradient.jsx';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getCurrentWeatherFromGeo,
   getCurrentWeatherFromLocation,
@@ -47,7 +47,25 @@ export default function Home({navigation}: any) {
   const [favoriteCities, setFavoriteCities] = useState<(ApiResponse | null)[]>(
     [],
   );
-  const [favorites, setFavorites] = useState<(Location | null)[]>([]);
+  const [favorites, setFavorites] = useState<(Location | null)[]>(() => {
+    let storedFavorites: Location[] = [];
+    try {
+      AsyncStorage.getItem('favorites').then(data => {
+        if (data) {
+          console.log('[SUCCESS] - Loaded favorites initial state from local');
+          console.log(JSON.parse(data));
+          return JSON.parse(data);
+        } else {
+          console.log('[WARN] - favorites initial state empty');
+        }
+      });
+    } catch (error) {
+      console.warn(error);
+    }
+    return storedFavorites;
+  });
+
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
@@ -55,50 +73,59 @@ export default function Home({navigation}: any) {
     month: 'short',
   });
 
-  // useEffect(() => {
-  //   requestLocationPermission();
-  //   geo().then(info => {
-  //     console.log(info.coords.latitude + ', ' + info.coords.longitude);
-  //     getCurrentWeatherFromGeo({
-  //       lat: info.coords.latitude,
-  //       lon: info.coords.longitude,
-  //     }).then((data: ApiResponse) => {
-  //       if (data) {
-  //         console.log(data);
-  //         setCurrentWeather(data);
-  //         Keyboard.dismiss();
-  //       }
-  //       return;
-  //     });
-  //   });
-  // }, []);
-
   useEffect(() => {
     getCurrentWeatherFromLocation(currentLocation).then((data: ApiResponse) => {
       setCurrentWeather(data);
       setCurrentLocation(data.location);
     });
+    getOtherCities(favorites).then(cities => setFavoriteCities(cities));
   }, []);
 
   useEffect(() => {
     getOtherCities(favorites).then(cities => setFavoriteCities(cities));
+    storeFavorites(favorites);
   }, [favorites]);
+
+  useEffect(() => {
+    setIsFavorite(favorites.includes(currentLocation));
+  }, [currentLocation]);
 
   function handleSearchPress(location: Location) {
     setCurrentLocation(location);
   }
 
+  async function storeFavorites(favorites: (Location | null)[]) {
+    try {
+      await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+  async function loadFavorites() {
+    try {
+      const dataFromStorage = await AsyncStorage.getItem('favorites');
+      if (dataFromStorage) {
+        return JSON.parse(dataFromStorage);
+      }
+    } catch (error) {
+      console.warn(error);
+      return [];
+    }
+  }
+
   function handleAddToFavorites() {
     if (currentLocation) {
-      const isAlreadyFavorite = favorites.includes(currentLocation);
       let updatedFavorites: (Location | null)[];
-      if (isAlreadyFavorite) {
+      if (isFavorite) {
         updatedFavorites = favorites.filter(
           favorite => favorite !== currentLocation,
         );
+        setIsFavorite(false);
         console.log('removing from favorites: ', currentLocation.name);
       } else {
         updatedFavorites = [...favorites, currentLocation];
+        setIsFavorite(true);
         console.log('Adding to favorites: ', currentLocation.name);
       }
       setFavorites(updatedFavorites);
@@ -135,7 +162,7 @@ export default function Home({navigation}: any) {
           currentLocation={currentLocation}
           onSearchPress={handleSearchPress}
           onAddToFavorites={handleAddToFavorites}
-          isFavorite={favorites.includes(currentLocation)}
+          favorite={isFavorite}
         />
         {/* End Top Section */}
 

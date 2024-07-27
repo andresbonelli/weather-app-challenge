@@ -106,15 +106,17 @@ export async function getForecast(
 export async function getOtherCities(
   favorites: (Location | null)[],
 ): Promise<ApiResponse[]> {
-  const cities: ApiResponse[] = [];
+  const otherCities: ApiResponse[] = [];
+
   await Promise.all(
     favorites.map(city => {
-      return getCurrentWeatherFromLocation(city).then(data =>
-        cities.push(data),
+      return getCurrentWeatherFromLocation(city).then(res =>
+        otherCities.push(res),
       );
     }),
   );
-  return cities;
+
+  return otherCities;
 }
 
 // [GET] - Search / Autocomplete function.
