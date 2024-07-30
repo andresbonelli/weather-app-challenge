@@ -1,10 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {TouchableWithoutFeedback, Pressable, Text, View} from 'react-native';
 import {searchCity} from '../api';
-
 import {fonts, colors} from '../utils';
 import {StyledInput, SearchBarContainer} from '../styled/StyledInputs';
-
 import {LocationIcon, StarIcon} from './Icons';
 
 export default function SearchBar({

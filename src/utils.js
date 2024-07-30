@@ -92,12 +92,12 @@ function getShortDayName(dayIndex) {
 
 // Function to generate the day name labels
 export function generateLabels() {
-  const todayIndex = new Date().getDay(); // Get the index of today's day
+  const todayIndex = new Date().getDay();
 
-  const tomorrowIndex = (todayIndex + 1) % 7; // Calculate the index for the next day
+  const tomorrowIndex = (todayIndex + 1) % 7;
   const tomorrow = getShortDayName(tomorrowIndex);
 
-  const dayAfterIndex = (todayIndex + 2) % 7; // Calculate the index for the day after next
+  const dayAfterIndex = (todayIndex + 2) % 7;
   const dayAfter = getShortDayName(dayAfterIndex);
 
   return {tomorrow, dayAfter};

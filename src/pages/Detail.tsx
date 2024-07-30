@@ -37,6 +37,7 @@ export default function Details({navigation, route}: any) {
 
   const hours: number[] = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
 
+  // Strings representing day of the week
   const {tomorrow, dayAfter} = generateLabels();
 
   useEffect(() => {
@@ -64,7 +65,9 @@ export default function Details({navigation, route}: any) {
           height={height / 4}
         />
       </View>
-      {/* TOP SECTION */}
+      {/* END BACKGROUND */}
+
+      {/* TOP SECTION: Current weather brief */}
       <DetailsTopContainer>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -96,7 +99,9 @@ export default function Details({navigation, route}: any) {
           </VerticalContainer>
         </HorizontalContainer>
       </DetailsTopContainer>
-      {/* MID SECTION */}
+      {/* END TOP SECTION */}
+
+      {/* MID SECTION: 3-day forecast by day/hour */}
       <DetailsMidContainer>
         <HorizontalContainer
           style={{justifyContent: 'space-between', paddingTop: 40}}>
@@ -153,9 +158,11 @@ export default function Details({navigation, route}: any) {
           </ForecastCardsContainer>
         )}
       </DetailsMidContainer>
-      {/* BOTTOM SECTION */}
-      {/* TODO: Expand up section */}
+      {/* END MID SECTION */}
+
+      {/* BOTTOM SECTION: Other misc weather details */}
       <DetailsBottomContainer>
+        {/* TODO: Expand up section */}
         {/* <DetailsBottomToggler></DetailsBottomToggler> */}
         {forecast && (
           <ParameterCardsContainer>
@@ -186,6 +193,7 @@ export default function Details({navigation, route}: any) {
           </ParameterCardsContainer>
         )}
       </DetailsBottomContainer>
+      {/* END BOTTOM SECTION */}
     </SafeAreaView>
   );
 }

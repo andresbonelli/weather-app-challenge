@@ -95,11 +95,13 @@ export default function Home({navigation}: any) {
 
   // ********* Functions *********
 
+  // Set Location retrieved from api search city endpoint.
   function handleSearchPress(location: Location) {
     console.log(location.name, location.id);
     setCurrentLocation(location);
   }
 
+  // Save/Load Favorites[] on AsyncStorage (array of Location objects, NOT actual weather data)
   async function storeFavorites(favorites: Location[]): Promise<void> {
     try {
       await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
@@ -121,6 +123,7 @@ export default function Home({navigation}: any) {
     return [];
   }
 
+  // Add/Remove Location on Favorites[] state (Will trigger useEffect).
   function handleAddToFavorites(): void {
     let updatedFavorites: Location[];
     if (currentLocation) {
@@ -143,6 +146,7 @@ export default function Home({navigation}: any) {
     }
   }
 
+  // Set current weather data from Favorites[] (NOT api call!)
   function handleRetrieveFromFavorites(city: ApiResponse): void {
     setCurrentLocation(city.location);
     setCurrentWeather(city);
