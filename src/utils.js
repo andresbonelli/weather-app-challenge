@@ -85,6 +85,24 @@ export function geo() {
   });
 }
 
+function getShortDayName(dayIndex) {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[dayIndex];
+}
+
+// Function to generate the day name labels
+export function generateLabels() {
+  const todayIndex = new Date().getDay(); // Get the index of today's day
+
+  const tomorrowIndex = (todayIndex + 1) % 7; // Calculate the index for the next day
+  const tomorrow = getShortDayName(tomorrowIndex);
+
+  const dayAfterIndex = (todayIndex + 2) % 7; // Calculate the index for the day after next
+  const dayAfter = getShortDayName(dayAfterIndex);
+
+  return {tomorrow, dayAfter};
+}
+
 export const dummyApiResponse = {
   location: {
     name: 'Default Location',

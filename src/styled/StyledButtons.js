@@ -5,6 +5,7 @@ import styled from 'styled-components';
 export const ForecastButtonContainer = styled(TouchableOpacity)`
   background-color: ${colors.lightBlue};
   justify-content: center;
+  margin-left: 5px;
   padding-left: 15px;
   padding-top: 5px;
   padding-right: 15px;

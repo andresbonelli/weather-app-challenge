@@ -5,7 +5,7 @@ import {searchCity} from '../api';
 import {fonts, colors} from '../utils';
 import {StyledInput, SearchBarContainer} from '../styled/StyledInputs';
 
-import {LocationIcon, SliderIcon, StarIcon} from './Icons';
+import {LocationIcon, StarIcon} from './Icons';
 
 export default function SearchBar({
   currentLocation,

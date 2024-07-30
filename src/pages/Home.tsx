@@ -10,7 +10,6 @@ import {
 
 import {
   Dimensions,
-  Keyboard,
   ScrollView,
   SafeAreaView,
   StatusBar,
@@ -47,23 +46,7 @@ export default function Home({navigation}: any) {
   const [favoriteCities, setFavoriteCities] = useState<(ApiResponse | null)[]>(
     [],
   );
-  const [favorites, setFavorites] = useState<(Location | null)[]>(() => {
-    let storedFavorites: Location[] = [];
-    try {
-      AsyncStorage.getItem('favorites').then(data => {
-        if (data) {
-          console.log('[SUCCESS] - Loaded favorites initial state from local');
-          console.log(JSON.parse(data));
-          return JSON.parse(data);
-        } else {
-          console.log('[WARN] - favorites initial state empty');
-        }
-      });
-    } catch (error) {
-      console.warn(error);
-    }
-    return storedFavorites;
-  });
+  const [favorites, setFavorites] = useState<(Location | null)[]>([]);
 
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
@@ -87,8 +70,10 @@ export default function Home({navigation}: any) {
   }, [favorites]);
 
   useEffect(() => {
-    setIsFavorite(favorites.includes(currentLocation));
-  }, [currentLocation]);
+    setIsFavorite(
+      favorites.some(favorite => favorite?.name === currentLocation?.name),
+    );
+  }, [currentLocation, favorites]);
 
   function handleSearchPress(location: Location) {
     setCurrentLocation(location);

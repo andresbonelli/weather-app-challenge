@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {getForecast} from '../api';
-import {colors, defaultStyles} from '../utils';
 import {View, Text, Dimensions, TouchableOpacity, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {colors, defaultStyles, generateLabels} from '../utils';
 import {
   VerticalContainer,
   HorizontalContainer,
@@ -14,11 +14,7 @@ import {
 } from '../styled/StyledContainers';
 
 import {DetailsTempLabel, WeatherLabel} from '../styled/StyledLabels';
-import {
-  DetailsBottomToggler,
-  ForecastButton,
-  ForecastButtonContainer,
-} from '../styled/StyledButtons';
+import {ForecastButton, ForecastButtonContainer} from '../styled/StyledButtons';
 import Gradient from '../components/Gradient';
 import {ArrowLeft} from '../components/Icons';
 import ForecastCard from '../components/ForecastCard';
@@ -29,24 +25,30 @@ export default function Details({navigation, route}: any) {
   const currentLocation: Location = route.params.location;
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
-  const [currentHourIndex, setCurrentHourIndex] = useState(8);
+  const [displayHour, setDisplayHour] = useState(() => new Date().getHours());
 
-  const hour = new Date().toLocaleTimeString('en-US', {
+  const currentTime = new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
   });
 
+  const currentHour = new Date().getHours();
+
+  const hours: number[] = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+
+  const {tomorrow, dayAfter} = generateLabels();
+
   useEffect(() => {
     getForecast(currentLocation).then(forecast => setForecast(forecast));
   }, []);
 
-  function handleChangeDayButtonPress() {
-    setCurrentDayIndex(currentState => (currentState === 0 ? 1 : 0));
+  function handleChangeDayButtonPress(dayIndex: number) {
+    setCurrentDayIndex(dayIndex);
   }
 
   function handleChangeHourButtonPress(hour: number) {
-    setCurrentHourIndex(hour);
+    setDisplayHour(hour);
   }
 
   return (
@@ -90,7 +92,7 @@ export default function Details({navigation, route}: any) {
               }}
               resizeMode="contain"
             />
-            <WeatherLabel>{hour}</WeatherLabel>
+            <WeatherLabel>{currentTime}</WeatherLabel>
           </VerticalContainer>
         </HorizontalContainer>
       </DetailsTopContainer>
@@ -99,41 +101,53 @@ export default function Details({navigation, route}: any) {
         <HorizontalContainer
           style={{justifyContent: 'space-between', paddingTop: 40}}>
           <Text style={defaultStyles.darkTitle}>Forecast:</Text>
-          <ForecastButtonContainer onPress={handleChangeDayButtonPress}>
-            <ForecastButton>
-              {currentDayIndex === 0 ? 'Tomorrow' : 'Today'}
-            </ForecastButton>
-          </ForecastButtonContainer>
+          <HorizontalContainer style={{justifyContent: 'space-between'}}>
+            <ForecastButtonContainer
+              onPress={() => handleChangeDayButtonPress(0)}>
+              <ForecastButton>Today</ForecastButton>
+            </ForecastButtonContainer>
+            <ForecastButtonContainer
+              onPress={() => handleChangeDayButtonPress(1)}>
+              <ForecastButton>{tomorrow}</ForecastButton>
+            </ForecastButtonContainer>
+            <ForecastButtonContainer
+              onPress={() => handleChangeDayButtonPress(2)}>
+              <ForecastButton>{dayAfter}</ForecastButton>
+            </ForecastButtonContainer>
+          </HorizontalContainer>
         </HorizontalContainer>
 
         {forecast && (
           <ForecastCardsContainer
             horizontal={true}
             showsHorizontalScrollIndicator={true}>
-            <ForecastCard
-              onCardPress={() => handleChangeHourButtonPress(8)}
-              dayPhase={'Morning'}
-              forecastHour={
-                forecast?.forecast.forecastday[currentDayIndex].hour[8]
-              }></ForecastCard>
-            <ForecastCard
-              onCardPress={() => handleChangeHourButtonPress(14)}
-              dayPhase={'Afternoon'}
-              forecastHour={
-                forecast?.forecast.forecastday[currentDayIndex].hour[14]
-              }></ForecastCard>
-            <ForecastCard
-              onCardPress={() => handleChangeHourButtonPress(18)}
-              dayPhase={'Evening'}
-              forecastHour={
-                forecast?.forecast.forecastday[currentDayIndex].hour[18]
-              }></ForecastCard>
-            <ForecastCard
-              onCardPress={() => handleChangeHourButtonPress(22)}
-              dayPhase={'Night'}
-              forecastHour={
-                forecast?.forecast.forecastday[currentDayIndex].hour[22]
-              }></ForecastCard>
+            {hours.map(hour => {
+              if (currentDayIndex === 0) {
+                if (hour >= currentHour) {
+                  return (
+                    <ForecastCard
+                      onCardPress={() => handleChangeHourButtonPress(hour)}
+                      dayPhase={hour}
+                      forecastHour={
+                        forecast?.forecast.forecastday[currentDayIndex].hour[
+                          hour
+                        ]
+                      }
+                    />
+                  );
+                }
+              } else {
+                return (
+                  <ForecastCard
+                    onCardPress={() => handleChangeHourButtonPress(hour)}
+                    dayPhase={hour}
+                    forecastHour={
+                      forecast?.forecast.forecastday[currentDayIndex].hour[hour]
+                    }
+                  />
+                );
+              }
+            })}
           </ForecastCardsContainer>
         )}
       </DetailsMidContainer>
@@ -146,11 +160,11 @@ export default function Details({navigation, route}: any) {
             <ParameterCard
               imgSource={require('../../assets/images/uvindex.png')}
               parameter={'UV Index'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].uv} of 10`}></ParameterCard>
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].uv} of 10`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/humidity.png')}
               parameter={'Humidity'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].humidity}%`}></ParameterCard>
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].humidity}%`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/high-low.png')}
               parameter={'High / Low'}
@@ -162,11 +176,11 @@ export default function Details({navigation, route}: any) {
             <ParameterCard
               imgSource={require('../../assets/images/dewpoint.png')}
               parameter={'Dew Point'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].dewpoint_c}ºC`}></ParameterCard>
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].dewpoint_c}ºC`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/visibility.png')}
               parameter={'Visibility'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[currentHourIndex].vis_km} km.`}></ParameterCard>
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].vis_km} km.`}></ParameterCard>
           </ParameterCardsContainer>
         )}
       </DetailsBottomContainer>
