@@ -126,6 +126,7 @@ export default function Details({navigation, route}: any) {
                 if (hour >= currentHour) {
                   return (
                     <ForecastCard
+                      key={hour}
                       onCardPress={() => handleChangeHourButtonPress(hour)}
                       dayPhase={hour}
                       forecastHour={
@@ -139,6 +140,7 @@ export default function Details({navigation, route}: any) {
               } else {
                 return (
                   <ForecastCard
+                    key={hour}
                     onCardPress={() => handleChangeHourButtonPress(hour)}
                     dayPhase={hour}
                     forecastHour={

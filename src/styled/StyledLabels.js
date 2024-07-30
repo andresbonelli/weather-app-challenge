@@ -49,9 +49,8 @@ export const OtherCitiesHeading = styled(Text)`
   font-family: ${fonts.Poppins.Bolder};
   font-weight: 700;
   color: ${colors.white};
-  padding-left: 20px;
   padding-top: 20px;
-  padding-bottom: 0px;
+  padding-bottom: 20px;
 `;
 
 export const OtherCityLabel = styled(Text)`

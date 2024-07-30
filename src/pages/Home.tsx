@@ -31,55 +31,76 @@ import {
   WeatherData,
   WeatherLabel,
 } from '../styled/StyledLabels.js';
-import {defaultStyles, dummyApiResponse} from '../utils.js';
+import {defaultStyles} from '../utils.js';
 import SearchBar from '../components/SearchBar.jsx';
 import {DetailsIcon} from '../components/Icons.js';
 import OtherCityCard from '../components/OtherCityCard.jsx';
+import {ClearButton, ClearButtonContainer} from '../styled/StyledButtons.js';
 
 export default function Home({navigation}: any) {
   const isDarkMode = useColorScheme() === 'dark';
-  const height = Dimensions.get('window').height;
+
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [currentWeather, setCurrentWeather] = useState<ApiResponse | null>(
     null,
   );
-  const [favoriteCities, setFavoriteCities] = useState<(ApiResponse | null)[]>(
-    [],
-  );
-  const [favorites, setFavorites] = useState<(Location | null)[]>([]);
-
+  const [favoriteCities, setFavoriteCities] = useState<ApiResponse[]>([]);
+  const [favorites, setFavorites] = useState<Location[]>([]);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
+  const height = Dimensions.get('window').height;
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
   });
 
+  // ********* Effects *********
+
+  // On first load: fetch hard coded initial Location "Buenos Aires"
   useEffect(() => {
     getCurrentWeatherFromLocation(currentLocation).then((data: ApiResponse) => {
       setCurrentWeather(data);
       setCurrentLocation(data.location);
     });
+    loadFavorites().then(savedFavs => setFavorites(savedFavs));
     getOtherCities(favorites).then(cities => setFavoriteCities(cities));
   }, []);
 
+  // On Location state change:
+  // - Check if Location is already in favorites or not.
+  // - Retrieve weather data from api using Geo coords.
+  useEffect(() => {
+    if (currentLocation) {
+      setIsFavorite(
+        favorites.some(
+          favorite =>
+            favorite.lon.toString() + favorite.lat.toString() ===
+            currentLocation?.lon.toString() + currentLocation?.lat.toString(),
+        ),
+      );
+    }
+    getCurrentWeatherFromLocation(currentLocation).then((data: ApiResponse) => {
+      setCurrentWeather(data);
+    });
+  }, [currentLocation]);
+
+  // On Favorites[] state change:
+  // - Retrieve multiple weather data from api using Geo coords.
+  // - Store favorites array in AsyncStorage
   useEffect(() => {
     getOtherCities(favorites).then(cities => setFavoriteCities(cities));
     storeFavorites(favorites);
   }, [favorites]);
 
-  useEffect(() => {
-    setIsFavorite(
-      favorites.some(favorite => favorite?.name === currentLocation?.name),
-    );
-  }, [currentLocation, favorites]);
+  // ********* Functions *********
 
   function handleSearchPress(location: Location) {
+    console.log(location.name, location.id);
     setCurrentLocation(location);
   }
 
-  async function storeFavorites(favorites: (Location | null)[]) {
+  async function storeFavorites(favorites: Location[]): Promise<void> {
     try {
       await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
     } catch (error) {
@@ -87,7 +108,7 @@ export default function Home({navigation}: any) {
     }
   }
 
-  async function loadFavorites() {
+  async function loadFavorites(): Promise<Location[]> {
     try {
       const dataFromStorage = await AsyncStorage.getItem('favorites');
       if (dataFromStorage) {
@@ -97,29 +118,39 @@ export default function Home({navigation}: any) {
       console.warn(error);
       return [];
     }
+    return [];
   }
 
-  function handleAddToFavorites() {
+  function handleAddToFavorites(): void {
+    let updatedFavorites: Location[];
     if (currentLocation) {
-      let updatedFavorites: (Location | null)[];
       if (isFavorite) {
         updatedFavorites = favorites.filter(
-          favorite => favorite !== currentLocation,
+          favorite =>
+            favorite.lon.toString() + favorite.lat.toString() !==
+            currentLocation.lon.toString() + currentLocation.lat.toString(),
         );
         setIsFavorite(false);
+
         console.log('removing from favorites: ', currentLocation.name);
       } else {
         updatedFavorites = [...favorites, currentLocation];
         setIsFavorite(true);
+
         console.log('Adding to favorites: ', currentLocation.name);
       }
       setFavorites(updatedFavorites);
     }
   }
 
-  function handleRetrieveFromFavorites(city: ApiResponse) {
+  function handleRetrieveFromFavorites(city: ApiResponse): void {
     setCurrentLocation(city.location);
     setCurrentWeather(city);
+  }
+
+  function handleClearFavorites(): void {
+    setFavorites([]);
+    setIsFavorite(false);
   }
 
   return (
@@ -194,7 +225,16 @@ export default function Home({navigation}: any) {
         {/* End Mid Section */}
 
         {/* Bottom Section: Favorites */}
-        <OtherCitiesHeading>Favorites:</OtherCitiesHeading>
+        <HorizontalContainer
+          style={{
+            justifyContent: 'space-between',
+            paddingHorizontal: 25,
+          }}>
+          <OtherCitiesHeading>Favorites:</OtherCitiesHeading>
+          <ClearButtonContainer onPress={() => handleClearFavorites()}>
+            <ClearButton>Clear</ClearButton>
+          </ClearButtonContainer>
+        </HorizontalContainer>
 
         {favoriteCities.length > 0 && (
           <OtherCitiesContainer
@@ -204,7 +244,10 @@ export default function Home({navigation}: any) {
               if (city) {
                 return (
                   <OtherCityCard
-                    key={city.location.name}
+                    key={
+                      city.location.lat.toString() +
+                      city.location.lon.toString()
+                    }
                     weather={city}
                     onRetrieve={() => handleRetrieveFromFavorites(city)}
                   />

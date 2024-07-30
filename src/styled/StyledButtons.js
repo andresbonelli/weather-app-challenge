@@ -28,3 +28,23 @@ export const DetailsBottomToggler = styled(View)`
   background-color: ${colors.lightBlue};
   margin-top: 20px;
 `;
+
+export const ClearButtonContainer = styled(TouchableOpacity)`
+  background-color: ${colors.pink};
+  justify-content: center;
+  margin-left: 5px;
+  padding-left: 15px;
+  padding-top: 5px;
+  padding-right: 15px;
+  padding-bottom: 5px;
+  border-width: 1px;
+  border-color: ${colors.pink};
+  border-radius: 9px;
+`;
+
+export const ClearButton = styled(Text)`
+  font-size: 16px;
+  font-family: ${fonts.Poppins.Bolder};
+  font-weight: 700;
+  color: ${colors.white};
+`;
