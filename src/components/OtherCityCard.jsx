@@ -31,8 +31,8 @@ export default function OtherCityCard({weather, onRetrieve}) {
               resizeMode="contain"
             />
             <VerticalContainer style={{alignItems: 'left', marginLeft: 20}}>
-              <OtherCityLabel>Location</OtherCityLabel>
               <OtherCityName>{weather.location.name}</OtherCityName>
+              <OtherCityLabel>{weather.location.country}</OtherCityLabel>
             </VerticalContainer>
           </HorizontalContainer>
           <HorizontalContainer>
