@@ -25,15 +25,14 @@ export default function Details({navigation, route}: any) {
   const currentLocation: Location = route.params.location;
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
-  const [displayHour, setDisplayHour] = useState(() => new Date().getHours());
-
-  const currentTime = new Date().toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
+  const [displayHour, setDisplayHour] = useState<number>(() => {
+    if (forecast) {
+      const localHour: string = forecast.location.localtime.split(' ')[1];
+      return parseInt(localHour.split(':')[0], 10);
+    } else {
+      return new Date().getHours();
+    }
   });
-
-  const currentHour = new Date().getHours();
 
   const hours: number[] = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
 
@@ -95,7 +94,9 @@ export default function Details({navigation, route}: any) {
               }}
               resizeMode="contain"
             />
-            <WeatherLabel>{currentTime}</WeatherLabel>
+            <WeatherLabel>
+              {forecast?.location.localtime.split(' ')[1]}
+            </WeatherLabel>
           </VerticalContainer>
         </HorizontalContainer>
       </DetailsTopContainer>
@@ -128,7 +129,13 @@ export default function Details({navigation, route}: any) {
             showsHorizontalScrollIndicator={true}>
             {hours.map(hour => {
               if (currentDayIndex === 0) {
-                if (hour >= currentHour) {
+                if (
+                  hour >=
+                  parseInt(
+                    forecast.location.localtime.split(' ')[1].split(':')[0],
+                    10,
+                  )
+                ) {
                   return (
                     <ForecastCard
                       key={hour}
