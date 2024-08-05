@@ -1,6 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
-import Svg, {Path, Line} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 
 // Arrow Left
 export function ArrowLeft({color, width, height}) {
