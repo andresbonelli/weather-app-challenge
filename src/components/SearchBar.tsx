@@ -1,18 +1,31 @@
 import React, {useState, useEffect} from 'react';
-import {TouchableWithoutFeedback, Pressable, Text, View} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  Pressable,
+  Text,
+  View,
+  Keyboard,
+} from 'react-native';
 import {searchCity} from '../api';
 import {fonts, colors} from '../utils';
 import {StyledInput, SearchBarContainer} from '../styled/StyledInputs';
 import {LocationIcon, StarIcon} from './Icons';
 
-export default function SearchBar({
+type SearchBarProps = {
+  currentLocation: Location | null;
+  onSearchPress: Function;
+  onAddToFavorites: Function;
+  favorite: Boolean;
+};
+
+const SearchBar: React.FC<SearchBarProps> = ({
   currentLocation,
   onSearchPress,
   onAddToFavorites,
   favorite,
-}) {
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState<Location[]>([]);
 
   useEffect(() => {
     if (searchQuery) {
@@ -87,4 +100,6 @@ export default function SearchBar({
       </TouchableWithoutFeedback>
     </>
   );
-}
+};
+
+export default SearchBar;

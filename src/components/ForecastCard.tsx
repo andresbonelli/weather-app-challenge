@@ -8,10 +8,20 @@ import {
 } from '../styled/StyledLabels';
 import {VerticalContainer} from '../styled/StyledContainers';
 
-export default function ForecastCard({dayPhase, forecastHour, onCardPress}) {
+type ForecastCardProps = {
+  dayPhase: number;
+  forecastHour: HourForecast;
+  onCardPress: Function;
+};
+
+const ForecastCard: React.FC<ForecastCardProps> = ({
+  dayPhase,
+  forecastHour,
+  onCardPress,
+}) => {
   return (
     <>
-      <ForecastCardView onPress={onCardPress}>
+      <ForecastCardView onPress={() => onCardPress()}>
         <VerticalContainer>
           <ForecastDayPhase>{dayPhase}</ForecastDayPhase>
           <Image
@@ -32,4 +42,6 @@ export default function ForecastCard({dayPhase, forecastHour, onCardPress}) {
       </ForecastCardView>
     </>
   );
-}
+};
+
+export default ForecastCard;

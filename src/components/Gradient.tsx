@@ -1,11 +1,20 @@
 import React from 'react';
 import {Svg, Defs, LinearGradient, Stop, Rect} from 'react-native-svg';
 
-const Gradient = ({
+type GradientProps = {
+  colorFrom: string;
+  colorTo: string;
+  id: string;
+
+  borderRadius: number;
+  height: number;
+};
+
+const Gradient: React.FC<GradientProps> = ({
   colorFrom,
   colorTo,
   id,
-  orientation,
+
   borderRadius,
   height,
 }) => {
@@ -16,7 +25,7 @@ const Gradient = ({
   const y2 = '1';
 
   return (
-    <Svg height={height} width="100%" orientation={orientation}>
+    <Svg height={height} width="100%">
       <Defs>
         <LinearGradient id={id} x1={x1} y1={y1} x2={x2} y2={y2}>
           <Stop offset="0" stopColor={colorFrom} stopOpacity="1" />

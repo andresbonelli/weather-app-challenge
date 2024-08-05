@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text} from 'react-native';
+import {Image, ImageSourcePropType, Text} from 'react-native';
 import {ParameterCardView} from '../styled/StyledCards';
 import {
   ForecastParameterName,
@@ -10,7 +10,17 @@ import {
   VerticalContainer,
 } from '../styled/StyledContainers';
 
-export default function ParameterCard({imgSource, parameter, value}) {
+type ParameterCardProps = {
+  imgSource: ImageSourcePropType;
+  parameter: string;
+  value: string | number;
+};
+
+const ParameterCard: React.FC<ParameterCardProps> = ({
+  imgSource,
+  parameter,
+  value,
+}) => {
   return (
     <>
       <ParameterCardView>
@@ -28,4 +38,6 @@ export default function ParameterCard({imgSource, parameter, value}) {
       </ParameterCardView>
     </>
   );
-}
+};
+
+export default ParameterCard;

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {colors, geo, requestLocationPermission} from '../utils.js';
-import Gradient from '../components/Gradient.jsx';
+import Gradient from '../components/Gradient.tsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getCurrentWeatherFromGeo,
@@ -32,9 +32,9 @@ import {
   WeatherLabel,
 } from '../styled/StyledLabels.js';
 import {defaultStyles} from '../utils.js';
-import SearchBar from '../components/SearchBar.jsx';
+import SearchBar from '../components/SearchBar.tsx';
 import {DetailsIcon} from '../components/Icons.js';
-import OtherCityCard from '../components/OtherCityCard.jsx';
+import OtherCityCard from '../components/OtherCityCard.tsx';
 import {ClearButton, ClearButtonContainer} from '../styled/StyledButtons.js';
 
 export default function Home({navigation}: any) {
@@ -170,7 +170,6 @@ export default function Home({navigation}: any) {
           colorTo={colors.darkViolet}
           id="top-card"
           borderRadius={20}
-          orientation={'vertical'}
           height={height}
         />
       </View>

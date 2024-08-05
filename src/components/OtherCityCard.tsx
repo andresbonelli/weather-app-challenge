@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image} from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 import {CityCardView} from '../styled/StyledCards';
 import {
   OtherCityLabel,
@@ -12,10 +12,15 @@ import {
   VerticalContainer,
 } from '../styled/StyledContainers';
 
-export default function OtherCityCard({weather, onRetrieve}) {
+type OtherCityCardProps = {
+  weather: ApiResponse;
+  onRetrieve: Function;
+};
+
+const OtherCityCard: React.FC<OtherCityCardProps> = ({weather, onRetrieve}) => {
   return (
     <>
-      <CityCardView onPress={onRetrieve}>
+      <CityCardView onPress={() => onRetrieve()}>
         <VerticalContainer>
           <HorizontalContainer>
             <Image
@@ -30,7 +35,7 @@ export default function OtherCityCard({weather, onRetrieve}) {
               }}
               resizeMode="contain"
             />
-            <VerticalContainer style={{alignItems: 'left', marginLeft: 20}}>
+            <VerticalContainer style={otherCityStyle.title}>
               <OtherCityName>{weather.location.name}</OtherCityName>
               <OtherCityLabel>{weather.location.country}</OtherCityLabel>
             </VerticalContainer>
@@ -59,4 +64,13 @@ export default function OtherCityCard({weather, onRetrieve}) {
       </CityCardView>
     </>
   );
-}
+};
+
+const otherCityStyle = StyleSheet.create({
+  title: {
+    alignItems: 'flex-start',
+    marginLeft: 20,
+  },
+});
+
+export default OtherCityCard;

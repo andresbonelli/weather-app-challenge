@@ -15,10 +15,10 @@ import {
 
 import {DetailsTempLabel, WeatherLabel} from '../styled/StyledLabels';
 import {ForecastButton, ForecastButtonContainer} from '../styled/StyledButtons';
-import Gradient from '../components/Gradient';
+import Gradient from '../components/Gradient.tsx';
 import {ArrowLeft} from '../components/Icons';
-import ForecastCard from '../components/ForecastCard';
-import ParameterCard from '../components/ParameterCard';
+import ForecastCard from '../components/ForecastCard.tsx';
+import ParameterCard from '../components/ParameterCard.tsx';
 
 export default function Details({navigation, route}: any) {
   const height = Dimensions.get('window').height;
@@ -60,7 +60,6 @@ export default function Details({navigation, route}: any) {
           colorTo={colors.darkViolet}
           id="top-card"
           borderRadius={20}
-          orientation={'vertical'}
           height={height / 4}
         />
       </View>
