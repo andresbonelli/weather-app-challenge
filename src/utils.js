@@ -85,20 +85,23 @@ export function geo() {
   });
 }
 
-function getShortDayName(dayIndex) {
+export function generateLabels(timezone) {
+  // Format the current date to get the weekday string
+  const todayWeekday = new Date().toLocaleDateString('en-US', {
+    timeZone: timezone,
+    weekday: 'short',
+  });
+
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  return days[dayIndex];
-}
+  const todayIndex = days.indexOf(todayWeekday);
 
-// Function to generate the day name labels
-export function generateLabels() {
-  const todayIndex = new Date().getDay();
-
+  // Calculate indices 0-6 for tomorrow and the day after
   const tomorrowIndex = (todayIndex + 1) % 7;
-  const tomorrow = getShortDayName(tomorrowIndex);
-
   const dayAfterIndex = (todayIndex + 2) % 7;
-  const dayAfter = getShortDayName(dayAfterIndex);
+
+  // Get labels using the adjusted indices
+  const tomorrow = days[tomorrowIndex];
+  const dayAfter = days[dayAfterIndex];
 
   return {tomorrow, dayAfter};
 }

@@ -37,7 +37,7 @@ export default function Details({navigation, route}: any) {
   const hours: number[] = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
 
   // Strings representing day of the week
-  const {tomorrow, dayAfter} = generateLabels();
+  const {tomorrow, dayAfter} = generateLabels(forecast?.location.tz_id);
 
   useEffect(() => {
     getForecast(currentLocation).then(forecast => setForecast(forecast));
