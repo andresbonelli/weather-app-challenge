@@ -13,7 +13,7 @@ import {
 type ParameterCardProps = {
   imgSource: ImageSourcePropType;
   parameter: string;
-  value: string | number;
+  value: string;
 };
 
 const ParameterCard: React.FC<ParameterCardProps> = ({

@@ -2,6 +2,7 @@ import {TouchableOpacity, View} from 'react-native';
 import styled from 'styled-components';
 import {colors} from '../utils';
 
+// Main Page: Favorites section
 export const CityCardView = styled(TouchableOpacity)`
   display: flex;
   flex-direction: column;
@@ -17,6 +18,7 @@ export const CityCardView = styled(TouchableOpacity)`
   margin-right: 9px;
 `;
 
+// Details Page Mid Section: Forecast highlight by hour/day phase
 export const ForecastCardView = styled(TouchableOpacity)`
   display: flex;
   flex-direction: column;
@@ -31,6 +33,7 @@ export const ForecastCardView = styled(TouchableOpacity)`
   padding: 10px;
 `;
 
+// Details Page Bottom Section: Weather details by hour.
 export const ParameterCardView = styled(View)`
   display: flex;
   flex-direction: row;

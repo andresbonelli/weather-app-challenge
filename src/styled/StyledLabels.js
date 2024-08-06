@@ -2,6 +2,7 @@ import {Text} from 'react-native';
 import {colors, fonts} from '../utils';
 import styled from 'styled-components';
 
+// Main Page Mid Section: Weather Overview
 export const DateLabel = styled(Text)`
   font-size: 16px;
   font-family: ${fonts.Poppins.Medium};
@@ -43,7 +44,7 @@ export const WeatherData = styled(Text)`
   font-size: 25px;
 `;
 
-// OTHER CITIES
+// Main Page Bottom Section: FAVORITES
 export const OtherCitiesHeading = styled(Text)`
   font-size: 16px;
   font-family: ${fonts.Poppins.Bolder};
@@ -81,7 +82,7 @@ export const OtherCityWeatherData = styled(Text)`
   font-size: 17px;
 `;
 
-// FORECAST DAY PHASES
+// Details Page Mid Section: FORECAST DAY PHASES/HOURS
 export const ForecastDayPhase = styled(Text)`
   font-size: 16px;
   font-family: ${fonts.Poppins.Bold};
@@ -103,8 +104,7 @@ export const ForecastHumidity = styled(Text)`
   color: ${colors.black};
 `;
 
-// FORECAST PARAMETERS
-
+// Details Page Bottom Section: FORECAST DETAILS PARAMETERS
 export const ForecastParameterName = styled(Text)`
   font-size: 16px;
   font-family: ${fonts.Poppins.Bold};

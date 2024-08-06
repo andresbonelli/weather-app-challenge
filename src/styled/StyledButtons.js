@@ -2,6 +2,7 @@ import {TouchableOpacity, Text, View} from 'react-native';
 import {colors, fonts} from '../utils';
 import styled from 'styled-components';
 
+// Main Page: Delete Favorites Button
 export const ClearButtonContainer = styled(TouchableOpacity)`
   background-color: ${colors.pink};
   justify-content: center;
@@ -22,6 +23,7 @@ export const ClearButton = styled(Text)`
   color: ${colors.white};
 `;
 
+// Details Page Mid Section: Select Weekday Forecast Button
 export const ForecastButtonContainer = styled(TouchableOpacity)`
   background-color: ${colors.lightBlue};
   justify-content: center;
@@ -42,6 +44,7 @@ export const ForecastButton = styled(Text)`
   color: ${colors.white};
 `;
 
+// Details page Bottom section: expand details (not yet implemented)
 export const DetailsBottomToggler = styled(View)`
   height: 5px;
   width: 50px;

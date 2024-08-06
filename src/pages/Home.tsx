@@ -16,6 +16,7 @@ import {
   useColorScheme,
   Image,
   View,
+  Pressable,
 } from 'react-native';
 
 import {
@@ -163,7 +164,7 @@ export default function Home({navigation}: any) {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={defaultStyles.backgroundStyle.backgroundColor}
       />
-      {/* Background */}
+      {/* BACKGROUND */}
       <View style={defaultStyles.backgroundGradient}>
         <Gradient
           colorFrom={colors.lightBlue}
@@ -173,9 +174,9 @@ export default function Home({navigation}: any) {
           height={height}
         />
       </View>
-      {/* End background */}
+      {/* END BACKGROUND */}
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        {/* Top Section: Search Bar */}
+        {/* TOP SECTION: Search Bar */}
         <DateLabel>{today}</DateLabel>
         <SearchBar
           currentLocation={currentLocation}
@@ -183,9 +184,9 @@ export default function Home({navigation}: any) {
           onAddToFavorites={handleAddToFavorites}
           favorite={isFavorite}
         />
-        {/* End Top Section */}
+        {/* END TOP SECTION */}
 
-        {/* Mid Section: Current Weather overview */}
+        {/* MID SECTION: Current Weather overview */}
         {currentWeather && (
           <>
             <BigTempLabel>{currentWeather.current.temp_c}ºC</BigTempLabel>
@@ -206,28 +207,28 @@ export default function Home({navigation}: any) {
                 <WeatherData>{currentWeather.current.wind_degree}</WeatherData>
                 <WeatherLabel>Humidity</WeatherLabel>
                 <WeatherData>{currentWeather.current.humidity}%</WeatherData>
-                <HorizontalContainer>
-                  <WeatherLabel
-                    onPress={() =>
-                      navigation.navigate('details', {
-                        location: currentLocation,
-                      })
-                    }>
-                    Detailed
-                  </WeatherLabel>
-                  <DetailsIcon
-                    color={colors.lightBlue}
-                    width={24}
-                    height={24}
-                  />
-                </HorizontalContainer>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('details', {
+                      location: currentLocation,
+                    })
+                  }>
+                  <HorizontalContainer>
+                    <WeatherLabel>Detailed</WeatherLabel>
+                    <DetailsIcon
+                      color={colors.lightBlue}
+                      width={24}
+                      height={24}
+                    />
+                  </HorizontalContainer>
+                </Pressable>
               </VerticalContainer>
             </HorizontalContainer>
           </>
         )}
-        {/* End Mid Section */}
+        {/* END MID SECTION */}
 
-        {/* Bottom Section: Favorites */}
+        {/* BOTTOM SECTION: Favorites */}
         <HorizontalContainer
           style={{
             justifyContent: 'space-between',
@@ -259,7 +260,7 @@ export default function Home({navigation}: any) {
             })}
           </OtherCitiesContainer>
         )}
-        {/* End Bottom Section */}
+        {/* END BOTTOM SECTION */}
       </ScrollView>
     </SafeAreaView>
   );

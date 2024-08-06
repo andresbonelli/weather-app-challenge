@@ -1,6 +1,7 @@
 import {PermissionsAndroid, StyleSheet} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 
+// STYLING
 export const colors = {
   white: '#fff',
   gray: '#ebf1fa',
@@ -60,6 +61,7 @@ export const defaultStyles = StyleSheet.create({
   },
 });
 
+// GEOLOCATION
 export async function requestLocationPermission() {
   try {
     const granted = await PermissionsAndroid.request(
@@ -85,6 +87,7 @@ export function geo() {
   });
 }
 
+// DYNAMIC WEEKDAY LABELS
 export function generateLabels(timezone) {
   // Format the current date to get the weekday string
   const todayWeekday = new Date().toLocaleDateString('en-US', {

@@ -45,6 +45,7 @@ export const ForecastCardsContainer = styled(ScrollView)`
   z-index: -999;
 `;
 
+// DETAILS PAGE CONTAINERS
 export const DetailsTopContainer = styled(View)`
   flex-direction: column;
   height: 200px;
