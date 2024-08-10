@@ -80,7 +80,18 @@ export default function Details({navigation, route}: any) {
             <WeatherLabel style={{color: colors.gray}}>
               {forecast?.location.country}
             </WeatherLabel>
-            <DetailsTempLabel>{forecast?.current.temp_c}ºC</DetailsTempLabel>
+            <HorizontalContainer style={{alignItems: 'flex-end'}}>
+              <DetailsTempLabel>{forecast?.current.temp_c}ºC</DetailsTempLabel>
+              <DetailsTempLabel
+                style={{
+                  fontSize: 20,
+                  color: colors.gray,
+                  paddingLeft: 20,
+                  paddingBottom: 10,
+                }}>
+                st {forecast?.current.feelslike_c}
+              </DetailsTempLabel>
+            </HorizontalContainer>
           </VerticalContainer>
           <VerticalContainer style={{alignItems: 'center', paddingBottom: 20}}>
             <Image
@@ -178,8 +189,8 @@ export default function Details({navigation, route}: any) {
               value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].uv} of 10`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/humidity.png')}
-              parameter={'Humidity'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].humidity}%`}></ParameterCard>
+              parameter={'Chance of Rain'}
+              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].chance_of_rain}%`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/high-low.png')}
               parameter={'High / Low'}

@@ -202,9 +202,18 @@ export default function Home({navigation}: any) {
                 }}
                 resizeMode="contain"
               />
-              <VerticalContainer style={{alignItems: 'flex-start'}}>
+              <VerticalContainer
+                style={{alignItems: 'flex-start', marginBottom: 10}}>
+                <WeatherLabel>Rain</WeatherLabel>
+                <WeatherData>
+                  {currentWeather.current.precip_mm}{' '}
+                  <WeatherLabel style={{color: colors.gray}}>mm</WeatherLabel>{' '}
+                </WeatherData>
                 <WeatherLabel>Wind</WeatherLabel>
-                <WeatherData>{currentWeather.current.wind_degree}</WeatherData>
+                <WeatherData>
+                  {currentWeather.current.wind_kph}{' '}
+                  <WeatherLabel style={{color: colors.gray}}>km/h</WeatherLabel>
+                </WeatherData>
                 <WeatherLabel>Humidity</WeatherLabel>
                 <WeatherData>{currentWeather.current.humidity}%</WeatherData>
                 <Pressable

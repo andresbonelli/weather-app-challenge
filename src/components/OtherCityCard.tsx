@@ -44,7 +44,7 @@ const OtherCityCard: React.FC<OtherCityCardProps> = ({weather, onRetrieve}) => {
             <VerticalContainer>
               <OtherCityWeather>Wind</OtherCityWeather>
               <OtherCityWeatherData>
-                {weather.current.wind_degree}
+                {weather.current.wind_kph}
               </OtherCityWeatherData>
             </VerticalContainer>
             <VerticalContainer>
