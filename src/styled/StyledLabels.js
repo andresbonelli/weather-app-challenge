@@ -90,6 +90,13 @@ export const ForecastDayPhase = styled(Text)`
   color: ${colors.black};
 `;
 
+export const ForecastDayPhaseSelected = styled(Text)`
+  font-size: 17px;
+  font-family: ${fonts.Poppins.Bolder};
+  font-weight: 700;
+  color: ${colors.pitchBlack};
+`;
+
 export const ForecastTemp = styled(Text)`
   font-size: 18px;
   font-family: ${fonts.Poppins.Bold};

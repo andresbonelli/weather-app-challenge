@@ -53,8 +53,9 @@ export const defaultStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
   },
-  highlight: {
+  selected: {
     fontWeight: '700',
+    fontFamily: fonts.Poppins.Bolder,
   },
   backgroundStyle: {
     backgroundColor: colors.pink,

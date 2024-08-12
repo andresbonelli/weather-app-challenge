@@ -3,6 +3,7 @@ import {Image, Text} from 'react-native';
 import {ForecastCardView} from '../styled/StyledCards';
 import {
   ForecastDayPhase,
+  ForecastDayPhaseSelected,
   ForecastHumidity,
   ForecastTemp,
 } from '../styled/StyledLabels';
@@ -10,20 +11,26 @@ import {VerticalContainer} from '../styled/StyledContainers';
 
 type ForecastCardProps = {
   dayPhase: number;
-  forecastHour: HourForecast;
+  hour: HourForecast;
   onCardPress: Function;
+  selected: boolean;
 };
 
 const ForecastCard: React.FC<ForecastCardProps> = ({
   dayPhase,
-  forecastHour,
+  hour: forecastHour,
   onCardPress,
+  selected,
 }) => {
   return (
     <>
       <ForecastCardView onPress={() => onCardPress()}>
         <VerticalContainer>
-          <ForecastDayPhase>{dayPhase}</ForecastDayPhase>
+          {selected ? (
+            <ForecastDayPhaseSelected>{dayPhase}</ForecastDayPhaseSelected>
+          ) : (
+            <ForecastDayPhase>{dayPhase}</ForecastDayPhase>
+          )}
           <Image
             source={{
               uri: `https://${forecastHour.condition.icon}`,

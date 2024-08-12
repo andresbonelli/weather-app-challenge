@@ -24,7 +24,7 @@ export default function Details({navigation, route}: any) {
   const height = Dimensions.get('window').height;
   const currentLocation: Location = route.params.location;
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
-  const [currentDayIndex, setCurrentDayIndex] = useState(0);
+  const [currentDayIndex, setCurrentDayIndex] = useState<0 | 1 | 2>(0);
   const [displayHour, setDisplayHour] = useState<number>(() => {
     if (forecast) {
       const localHour: string = forecast.location.localtime.split(' ')[1];
@@ -34,20 +34,32 @@ export default function Details({navigation, route}: any) {
     }
   });
 
-  const hours: number[] = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+  // Special weather data forecast by day.
+  const days: Array<{
+    date: string;
+    date_epoch: number;
+    day: DayForecast;
+    astro: AstroForecast;
+    hour: HourForecast[];
+    air_quality?: AirQuality;
+  }> = forecast ? forecast.forecast.forecastday : [];
+  // Special weather data forecast by hour.
+  const hours: HourForecast[] = forecast
+    ? forecast.forecast.forecastday[currentDayIndex].hour
+    : [];
 
   // Strings representing day of the week
   const {tomorrow, dayAfter} = generateLabels(forecast?.location.tz_id);
-
+  // Retrieve forecast data from API
   useEffect(() => {
     getForecast(currentLocation).then(forecast => setForecast(forecast));
   }, []);
-
-  function handleChangeDayButtonPress(dayIndex: number) {
+  // Set forecast day to display (0 | 1 | 2)
+  function selectDayForecast(dayIndex: 0 | 1 | 2) {
     setCurrentDayIndex(dayIndex);
   }
-
-  function handleChangeHourButtonPress(hour: number) {
+  // Set forecast hour to display (0 to 24)
+  function selectHourForecast(hour: number) {
     setDisplayHour(hour);
   }
 
@@ -69,6 +81,7 @@ export default function Details({navigation, route}: any) {
       <DetailsTopContainer>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
+          accessibilityLabel="Go back"
           style={{zIndex: 999}}>
           <ArrowLeft color={colors.gray} width={25} height={25} />
         </TouchableOpacity>
@@ -118,17 +131,23 @@ export default function Details({navigation, route}: any) {
           style={{justifyContent: 'space-between', paddingTop: 40}}>
           <Text style={defaultStyles.darkTitle}>Forecast:</Text>
           <HorizontalContainer style={{justifyContent: 'space-between'}}>
-            <ForecastButtonContainer
-              onPress={() => handleChangeDayButtonPress(0)}>
-              <ForecastButton>Today</ForecastButton>
+            <ForecastButtonContainer onPress={() => selectDayForecast(0)}>
+              <ForecastButton
+                style={[currentDayIndex === 0 ? defaultStyles.selected : {}]}>
+                Today
+              </ForecastButton>
             </ForecastButtonContainer>
-            <ForecastButtonContainer
-              onPress={() => handleChangeDayButtonPress(1)}>
-              <ForecastButton>{tomorrow}</ForecastButton>
+            <ForecastButtonContainer onPress={() => selectDayForecast(1)}>
+              <ForecastButton
+                style={[currentDayIndex === 1 ? defaultStyles.selected : {}]}>
+                {tomorrow}
+              </ForecastButton>
             </ForecastButtonContainer>
-            <ForecastButtonContainer
-              onPress={() => handleChangeDayButtonPress(2)}>
-              <ForecastButton>{dayAfter}</ForecastButton>
+            <ForecastButtonContainer onPress={() => selectDayForecast(2)}>
+              <ForecastButton
+                style={[currentDayIndex === 2 ? defaultStyles.selected : {}]}>
+                {dayAfter}
+              </ForecastButton>
             </ForecastButtonContainer>
           </HorizontalContainer>
         </HorizontalContainer>
@@ -137,40 +156,34 @@ export default function Details({navigation, route}: any) {
           <ForecastCardsContainer
             horizontal={true}
             showsHorizontalScrollIndicator={true}>
-            {hours.map(hour => {
-              if (currentDayIndex === 0) {
-                if (
-                  hour >=
-                  parseInt(
+            {hours.map((hourForecast: HourForecast, index) => {
+              const isSelected =
+                currentDayIndex === 0
+                  ? index >=
+                    parseInt(
+                      forecast.location.localtime.split(' ')[1].split(':')[0],
+                      10,
+                    )
+                  : true;
+              const isCurrentDay = currentDayIndex === 0;
+              const hourToShow = isCurrentDay
+                ? parseInt(
                     forecast.location.localtime.split(' ')[1].split(':')[0],
                     10,
                   )
-                ) {
-                  return (
-                    <ForecastCard
-                      key={hour}
-                      onCardPress={() => handleChangeHourButtonPress(hour)}
-                      dayPhase={hour}
-                      forecastHour={
-                        forecast?.forecast.forecastday[currentDayIndex].hour[
-                          hour
-                        ]
-                      }
-                    />
-                  );
-                }
-              } else {
+                : 0;
+              if (index >= hourToShow || !isCurrentDay) {
                 return (
                   <ForecastCard
-                    key={hour}
-                    onCardPress={() => handleChangeHourButtonPress(hour)}
-                    dayPhase={hour}
-                    forecastHour={
-                      forecast?.forecast.forecastday[currentDayIndex].hour[hour]
-                    }
+                    key={index}
+                    onCardPress={() => selectHourForecast(index)}
+                    dayPhase={index}
+                    hour={hourForecast}
+                    selected={isSelected && index === displayHour}
                   />
                 );
               }
+              return null;
             })}
           </ForecastCardsContainer>
         )}
@@ -186,27 +199,27 @@ export default function Details({navigation, route}: any) {
             <ParameterCard
               imgSource={require('../../assets/images/uvindex.png')}
               parameter={'UV Index'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].uv} of 10`}></ParameterCard>
+              value={`${hours[displayHour].uv} of 10`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/humidity.png')}
               parameter={'Chance of Rain'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].chance_of_rain}%`}></ParameterCard>
+              value={`${hours[displayHour].chance_of_rain}%`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/high-low.png')}
               parameter={'High / Low'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].day.maxtemp_c} / ${forecast?.forecast.forecastday[currentDayIndex].day.mintemp_c}`}></ParameterCard>
+              value={`${days[currentDayIndex].day.maxtemp_c} / ${days[currentDayIndex].day.mintemp_c}`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/moonphase.png')}
               parameter={'Moon Phase'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].astro.moon_phase}`}></ParameterCard>
+              value={`${days[currentDayIndex].astro.moon_phase}`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/dewpoint.png')}
               parameter={'Dew Point'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].dewpoint_c}ºC`}></ParameterCard>
+              value={`${hours[displayHour].dewpoint_c}ºC`}></ParameterCard>
             <ParameterCard
               imgSource={require('../../assets/images/visibility.png')}
               parameter={'Visibility'}
-              value={`${forecast?.forecast.forecastday[currentDayIndex].hour[displayHour].vis_km} km.`}></ParameterCard>
+              value={`${hours[displayHour].vis_km} km.`}></ParameterCard>
           </ParameterCardsContainer>
         )}
       </DetailsBottomContainer>
